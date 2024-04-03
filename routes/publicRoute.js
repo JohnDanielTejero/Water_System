@@ -30,17 +30,17 @@ router.get('/current-user', (req, res) =>{
 })
 
 //API for error redirection
-router.get('/redirection', (req, res) =>{
+router.get('/redirection', (req, res) => {
   if(typeof req?.session?.user == "undefined" || typeof req?.session?.user == "null"){
-    res.status(200).json({'redirect_url': '/login'});
+    res.status(200).redirect('/login');
     return;
   }
   if(req.session.user.username == "admin"){
-    res.status(200).json({'redirect_url': '/admin'});
+    res.status(200).redirect('/admin');
     return;
   }
 
-  res.status(200).json({'redirect_url': '/'});
+  res.status(200).redirect('/');
 });
 
 router.get('/login', (req, res) => { 
@@ -87,6 +87,7 @@ router.post('/login', (req, res) => {
     })
 });
 
+//API: redirection lang
 router.get('/logout', (req, res) => {
   if(typeof req.session?.user != "undefined" && typeof req?.session?.user != "null"){
     req.session.user = null;

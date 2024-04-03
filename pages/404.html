@@ -3,23 +3,7 @@
   
     <p>
       We could not find the page you were looking for.
-      Meanwhile, you may <a href="" id="redirection">return to dashboard</a> or try using the search form.
+      Meanwhile, you may <a href="/redirection">return to dashboard</a> or try using the search form.
     </p>
   
   </div> 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const redirection = document.getElementById("redirection");
-      redirection.addEventListener("click", () => {
-
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-              window.location.replace(JSON.parse(this.response).redirect_url);
-            }
-        };
-        xhttp.open("GET", 'http://localhost:3000/redirection');
-        xhttp.send();
-      });
-    })
-  </script>
