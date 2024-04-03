@@ -1,0 +1,21 @@
+# Routing System
+
+```shell
+routes
+    |_route.config.js
+```
+
+## route.config.js
+ - Here you will connect your defined routes, e.g.
+ ```js
+    const express = require('express');
+    const router = express.Router();
+
+    //import your files that has routing configurations
+    const adminRouter = require('./adminRoute.js');
+
+    //specify which file to use
+    router.use('/admin', adminRouter);
+
+    module.exports = router;
+ ```

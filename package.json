@@ -1,0 +1,35 @@
+{
+  "name": "water_system",
+  "version": "1.0.0",
+  "description": "water system refilling ",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "author": "Lorence",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JohnDanielTejero/Water_System.git"
+  },
+  "keywords": [
+    "water",
+    "refilling",
+    "system"
+  ],
+  "bugs": {
+    "url": "https://github.com/JohnDanielTejero/Water_System/issues"
+  },
+  "homepage": "https://github.com/JohnDanielTejero/Water_System#readme",
+  "dependencies": {
+    "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-static": "^1.2.6",
+    "mysql2": "^3.9.3",
+    "nodemon": "^3.1.0"
+  }
+}
