@@ -3,10 +3,11 @@ const express = require('express');
 require('dotenv').config();
 const path = require('path');   
 
-const static = require('express-static');
+require('express-static');
 const app = express(); 
 const router = require('./routes/route.config.js');
 const errorInterceptor = require('./middleware/errors.js');
+const session = require('express-session');
 
 const imagePath = path.join(__dirname, '/uploads');
 const pluginsPath = path.join(__dirname, '/plugins');
@@ -19,6 +20,12 @@ const distPath = path.join(__dirname, '/dist');
 app.use('/uploads', express.static(imagePath));
 app.use('/plugins', express.static(pluginsPath));
 app.use('/dist', express.static(distPath));
+
+app.use(session({
+    secret: process.env.APP_SECRET, 
+    resave: false,
+    saveUninitialized: false
+  }));
 /**
  * use app.use() if you want to connect modules to the express server.
  * In this case, I am using the router file and add the url '/' as the entry point on access...
@@ -44,8 +51,6 @@ app.use(errorInterceptor);
 //boostraps the server, run via npm run start or npm run dev for development purposes
 app.listen(process.env.APP_PORT, (error) => { 
     if(!error) {
-        console.log(imagePath);
-        console.log(pluginsPath);
         console.log("Server is Successfully Running, and App is listening on port " + process.env.APP_PORT) 
     }
     else 

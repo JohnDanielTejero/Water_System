@@ -1,0 +1,36 @@
+<h1 class="text-dark">Welcome to Water For Life - Water Refilling Station</h1>
+
+<hr>
+<div class="container-fluid">
+<div class="row">
+    <div class="col-12 col-sm-6 col-md-3">
+    <div class="info-box">
+        <span class="info-box-icon bg-info elevation-1"><i class="fas fa-hand-holding-water"></i></span>
+
+        <div class="info-box-content">
+        <span class="info-box-text">Total Sales Today</span>
+        <span class="info-box-box text-right" data-total-sales>
+        </span>
+        </div>
+    </div>
+    </div>
+</div>
+<script>
+    $(document).ready(()=>{
+        $.ajax({
+            url: _base_url_ + "/admin/total_sales?date=" + new Date().toISOString(),
+            method: 'GET', 
+            error: err => {
+                console.log(err)
+            },
+            success: (resp) => {
+                if(resp.total == null){
+                    $('[data-total-sales]').html(0);
+                    return;
+                } 
+                $('[data-total-sales]').html(resp.total);
+            }
+        })
+           
+    })
+</script>

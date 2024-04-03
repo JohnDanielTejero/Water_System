@@ -23,11 +23,12 @@ window.alert_toast = function($msg = 'TEST', $bg = 'success', $pos = '') {
 $(document).ready(function() {
     $('#login-frm').submit(function(e) {
             e.preventDefault()
+
             start_loader()
             if ($('.err_msg').length > 0)
                 $('.err_msg').remove()
             $.ajax({
-                url: _base_url_ + 'classes/Login.php?f=login',
+                url: _base_url_ + '/login',
                 method: 'POST',
                 data: $(this).serialize(),
                 error: err => {
@@ -36,9 +37,16 @@ $(document).ready(function() {
                 },
                 success: function(resp) {
                     if (resp) {
-                        resp = JSON.parse(resp)
+                        //console.log(resp)
+                        //resp = JSON.parse(resp)
                         if (resp.status == 'success') {
-                            location.replace(_base_url_ + 'admin');
+                            //bad practice, please include role based for security purposes
+                            if(resp.user.username == "admin") {
+                                window.location.replace(_base_url_ + '/admin');
+                                return;
+                            }
+                            window.location.replace(_base_url_ + '/');
+
                         } else if (resp.status == 'incorrect') {
                             var _frm = $('#login-frm')
                             var _msg = "<div class='alert alert-danger text-white err_msg'><i class='fa fa-exclamation-triangle'></i> Incorrect username or password</div>"
@@ -50,7 +58,8 @@ $(document).ready(function() {
                     }
                 }
             })
-        })
+        });
+
     $('#login-client').submit(function(e) {
             e.preventDefault()
             start_loader()
