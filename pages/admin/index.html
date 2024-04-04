@@ -1,100 +1,31 @@
-<div class="sidebar-mini layout-fixed control-sidebar-slide-open layout-navbar-fixed sidebar-mini-md sidebar-mini-xs" data-new-gr-c-s-check-loaded="14.991.0" data-gr-ext-installed="" style="height: auto;">
-    <div class="wrapper">
-        <div id="topbarnav"></div>
-        <div id="navigation"></div>
-                
-        <div class="content-wrapper pt-3" style="min-height: 567.854px;">
-            <section class="content  text-dark">
-            <div class="container-fluid" data-dashboard-content>
-                
-            </div>
-            </section>
-        <div class="modal fade" id="confirm_modal" role='dialog'>
-        <div class="modal-dialog modal-md modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h5 class="modal-title">Confirmation</h5>
-        </div>
-        <div class="modal-body">
-            <div id="delete_content"></div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-primary" id='confirm' onclick="">Continue</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
-        </div>
+<div class="wrapper w-100 h-100">
+    <div class="content-wrapper d-flex flex-row h-100 w-100">
+        <aside id="side-nav"></aside>
+        <div class="d-flex flex-column w-100">
+            <nav id="top-nav"></nav>
+            <main id="main-content"></main>
         </div>
     </div>
-    <div class="modal fade" id="uni_modal" role='dialog'>
-        <div class="modal-dialog modal-md modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h5 class="modal-title"></h5>
-        </div>
-        <div class="modal-body">
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-primary" id='submit' onclick="$('#uni_modal form').submit()">Save</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        </div>
-        </div>
-        </div>
-    </div>
-    <div class="modal fade" id="uni_modal_right" role='dialog'>
-        <div class="modal-dialog modal-full-height  modal-md" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h5 class="modal-title"></h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span class="fa fa-arrow-right"></span>
-            </button>
-        </div>
-        <div class="modal-body">
-        </div>
-        </div>
-        </div>
-    </div>
-    <div class="modal fade" id="viewer_modal" role='dialog'>
-        <div class="modal-dialog modal-md" role="document">
-        <div class="modal-content">
-            <button type="button" class="btn-close" data-dismiss="modal"><span class="fa fa-times"></span></button>
-            <img src="" alt="">
-        </div>
-        </div>
-    </div>        
 </div>
-<script>
-    $(document).ready(() => {
+<script defer> 
+    $(document).ready(function(){
+        
         $.ajax({
-            url: _base_url_ + "/current-user",
+            url: `${url}/current-user`,
             method: 'GET',
-            error: err => {
-                    console.log(err)
-
-                },
-            success: (resp) => {
-                $('[data-user-name]').each((i, e) => {
-                    e.innerHTML = `${resp.firstname}  ${resp.lastname}`; 
-                });
-                
-                $('[data-user-img]').attr('src', resp.avatar);
-
-                $('[data-logo-img]').attr('src', 'uploads/1710989040_Water for Life (1).png');
+            error: e => console.error(e),
+            success: resp => {
+                $('[data-user-img]').attr('src', "/"+ resp.avatar);
+                $('[data-user-name]').html(`${resp.firstname} ${resp.lastname}`);
             }
-        })
+        });
 
-        if (window.location.pathname == '/admin'){
-            $.ajax({
-            url: _base_url_ + "/admin/dashboard",
-            method: 'GET',
-            error: err => {
-                    console.log(err)
-
-                },
-            success: (resp) => {
-                $('[data-dashboard-content]').html(resp);
-            }
-        })
-        }
+        $('[data-widget="pushmenu"]').click(function(){
+            $('.main-side').toggleClass('active');
+        });
+        $('[data-toggle="dropdown"]').click(function(){
+            $($(this).attr('data-bs-target')).toggle();
+        });
+        
     });
 </script>

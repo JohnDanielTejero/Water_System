@@ -1,0 +1,80 @@
+<div class="card card-outline card-primary">
+	<div class="card-header">
+		<h3 class="card-title">Sales</h3>
+		<div class="card-tools">
+			<a href="/admin/page-sales/manage_sales" class="btn btn-flat btn-primary"><span class="fas fa-plus"></span>  Create New</a>
+		</div>
+	</div>
+	<div class="card-body">
+        <div class="container-fluid">
+			<table class="table table-bordered table-stripped" id="indi-list">
+				<colgroup>
+					<col width="5%">
+					<col width="15%">
+					<col width="20%">
+					<col width="20%">
+					<col width="10%">
+					<col width="10%">
+					<col width="10%">
+					<col width="10%">
+				</colgroup>
+				<thead>
+					<tr>
+						<th class="text-center">#</th>
+						<th>Date Created</th>
+						<th>Customer</th>
+						<th>Type</th>
+						<th>Status</th>
+						<th>Total Items</th>
+						<th>Amount</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody id="sales-listing">
+						
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<script>
+    $(document).ready(function(){
+        
+        $.ajax({
+            url : `${url}/admin/sales_list`,
+            method: "GET",
+            error: e => console.error(e),
+            success: response => {
+                console.log(response);
+                response.forEach(resp => {
+                    $('#sales-listing').append(`
+                        <tr>
+                            <td class="text-center">${resp.id}</td>
+                            <td>${new Date(resp.date_created).toDateString()}</td>
+                            <td>${resp.customer_name}</td>
+                            <td>${resp.type == 1? "walk-in" : "for delivery"}</td>
+                            <td class="text-center">${resp.status == 1?"<span class='bg-success text-light badge badge-success'>Paid</span>" : "<span class='bg-primary text-light badge badge-primary'>Unpaid</span>" }
+                            <td class='text-right'>${resp.total_quantity}</td>
+                            <td class='text-right'>${resp.amount}</td>
+                            <td align="center">
+                                <button type="button" class="btn btn-flat btn-default btn-sm dropdown-toggle dropdown-icon" data-toggle="dropdown" data-dropdown-items data-bs-target="#action-${resp.id}">
+                                    Action
+                                </button>
+                                <div class="dropdown-menu" role="menu" id="action-${resp.id}">
+                                <a class="dropdown-item edit_data" href="./?page=sales/manage_sales&id=<?php echo $row['id'] ?>" data-id="<?php echo $row['id'] ?>"> Edit</a>
+                                <a class="dropdown-item delete_data" href="javascript:void(0)" data-id="<?php echo $row['id'] ?>"> Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                    `);
+                    $("button.btn[data-bs-target='#action-" + resp.id + "']").click(function(){
+                        $($(this).attr('data-bs-target')).toggle();
+                    })
+                   
+                
+                });
+            }    
+        })
+        
+    });
+</script>

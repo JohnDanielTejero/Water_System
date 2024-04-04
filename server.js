@@ -10,16 +10,20 @@ const errorInterceptor = require('./middleware/errors.js');
 const session = require('express-session');
 
 const imagePath = path.join(__dirname, '/uploads');
-const pluginsPath = path.join(__dirname, '/plugins');
-const distPath = path.join(__dirname, '/dist');
+const bootstrapPath = path.join(__dirname, '/node_modules/bootstrap');
+const bootstrapIconsPath = path.join(__dirname, '/node_modules/bootstrap-icons');
+const jQueryPath = path.join(__dirname, '/node_modules/jquery');
+const scriptsPath = path.join(__dirname, '/pages/scripts');
 
 /**
  * using express-static library so we can access the static files of the project,
  * Setup the url by default based on their folder path
  */
 app.use('/uploads', express.static(imagePath));
-app.use('/plugins', express.static(pluginsPath));
-app.use('/dist', express.static(distPath));
+app.use('/bootstrap', express.static(bootstrapPath));
+app.use('/bootstrap-icons', express.static(bootstrapIconsPath));
+app.use('/jquery', express.static(jQueryPath));
+app.use('/scripts', express.static(scriptsPath));
 
 app.use(session({
     secret: process.env.APP_SECRET, 

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../configs/dbCon.js'); //require if needed:
+const db = require('../constants/dbCon.js'); //require if needed:
 const path = require('path');
 const fs = require('fs');
 const bodyParser = require('body-parser');
@@ -24,7 +24,7 @@ router.get('/', (req, res) =>{
   res.status(200).send("<h1>hello</h1>");
 });
 
-//API
+//API, retrieving current user in session
 router.get('/current-user', (req, res) =>{
   res.status(200).json(req.session.user);
 })
@@ -64,14 +64,14 @@ router.get('/login', (req, res) => {
     
           res.status(200).send(finalHtml);
         });
-      });
+    });
     
 }); 
 
 //API: See script.js line 24
 router.post('/login', (req, res) => {
   const {username, password } = req.body;
-  //bad practice, change this to using hash and comparing pass with hashed pass
+  //bad practice, change this to using hash and comparing pass with hashed pass, but for demonstration sake we'll keep it like this
   db.query('SELECT * FROM users WHERE username = ? AND password = ?;', [username, password], (error, result) => {
     if (error) {
         console.error(error);
