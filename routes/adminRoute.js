@@ -46,7 +46,6 @@ router.get('/sales', (req, res) => {
 });
 
 router.get('/sales/manage-sales', (req, res) => {
-  //const { query } = req;
 
   res.set('Content-Type', 'text/html'); 
   if(typeof req?.session?.user == "undefined" || typeof req?.session?.user == "null"){
@@ -90,6 +89,21 @@ router.get('/jars/manage-jars', (req, res) => {
       return res.status(500).send('Error reading template');
     }
     adminTemplate(req, res, template, 'manage-jars');
+  });
+});
+
+router.get('/reports', (req, res) => {
+  res.set('Content-Type', 'text/html'); 
+  if(typeof req?.session?.user == "undefined" || typeof req?.session?.user == "null"){
+    res.redirect('/login');
+    return;
+  }
+  fs.readFile(path.join(__dirname, '..') + '/pages/template.html', 'utf8', (err, template) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Error reading template');
+    }
+    adminTemplate(req, res, template, 'sales-report');
   });
 });
 
@@ -319,5 +333,45 @@ router.get('/delete-jar', (req, res) => {
   );
 });
 
+//API - get sales based on filter
+router.get('/get-sales-report', (req, res) => {
+  const { datestart, dateend, type } = req.query;
+
+  let query = `
+    SELECT * FROM sales 
+    WHERE 
+      status = 1 
+    AND
+      date(date_created) BETWEEN '${datestart}' and '${dateend}'
+  `;
+
+  // Check if type is defined and not null
+  if (type !== undefined && type !== null && type !== "all") {
+    query += ` AND type = '${type}'`;
+  }
+
+  db.query(query, (err, rows) => {
+    if(!err){
+      return res.status(200).json(rows);
+    }
+    return res.status(200).json(err);
+  });
+});
+
+//API - get sales-item based on filter
+router.get('/get-sales-items', (req, res) => {
+  const { sales_id } = req.query;
+  let query = `
+  SELECT i.*, j.name FROM sales_items i inner join jar_types j on j.id = i.jar_type_id 
+  WHERE i.sales_id = ${sales_id};
+  `;
+
+  db.query(query, (err, rows) => {
+    if(!err){
+      return res.status(200).json(rows);
+    }
+    return res.status(200).json(err);
+  });
+});
 
 module.exports = router;
