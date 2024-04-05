@@ -1,0 +1,339 @@
+<div class="card card-outline card-primary p-2">
+    <h3 class="card-title" data-bs-title></h3>
+    </div>
+    <div class="card-body p-2">
+        <div class="container-fluid">
+            <form id="sales-form">
+                <input type="hidden" name="id" id="id" value="">
+                <div class="row">
+                    <div class="form-group col-sm-6">
+                        <label class="control-label">Customer Name</label>
+                        <input type="text" name="customer_name" class="form-control" id="customer_name" reqiured value="">
+                        <div class="invalid-feedback">
+                            Invalid Customer Name
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-6">
+                        <label class="control-label">Type</label>
+                        <select class="form-control" id="type" name="type" class="custom-select select2" >
+                            <option value="1">Walk-In</option>
+                            <option value="2">For Delivery</option>
+                        </select>
+                        <div class="invalid-feedback">
+                            Please select an option.
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="display:none" id="da-holder">
+                    <div class="form-group col-sm-6">
+                        <label class="control-label">Delivery Address</label>
+                        <textarea type="text" rows="2" style="resize:none" name="delivery_address" class="form-control" id="delivery_address"></textarea>
+                        <div class="invalid-feedback">
+                            Invalid Customer Name
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row align-items-end">
+                    <div class="form-group col-sm-4">
+                        <label class="control-label">Jar Type</label>
+                        <select  id="jar_type_id" class="custom-select select2 form-select">
+                            <option value="" disabled selected>Please Select</option>
+                        </select>
+                        <div class="invalid-feedback">
+                            Please select an option.
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-4">
+                        <label class="control-label">Quantity</label>
+                        <input type="number" min="1" class="form-control" id="quantity">
+                        <div class="invalid-feedback">
+                            Please indicate the proper quantity
+                        </div>
+                    </div>
+                    <div class="col-sm-2 d-flex flex-column">
+                        <button class="w-100 h-100 btn btn-primary btn-flat" type="button" id="add_to_list"><i class="fa fa-plus"></i> Add</button>
+                    </div>
+                </div>
+                <hr>
+                <table class="table table-bordered table-striped" id="item-list">
+                    <colgroup>
+                        <col width="5%">
+                        <col width="15%">
+                        <col width="30%">
+                        <col width="25%">
+                        <col width="25%">
+                    </colgroup>
+                    <thead>
+                        <div class="d-block" data-warning>
+                        </div>
+                        <tr>
+                            <th></th>
+                            <th>QTY</th>
+                            <th>Jar Type</th>
+                            <th>Price</th>
+                            <th>Total Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody data-item-display>
+                    
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan='2' class="text-center">Total <input type="hidden" name="amount" value="<?php echo isset($amount)? $amount : 0 ?>"> </th>
+                            <th colspan = '4'class="text-right" id="grand_total"><?php echo isset($amount)? $amount : 0 ?></th>
+                        </tr>
+                    </tfoot>
+                </table>
+                <hr>
+                <div class="form-group col-sm-4">
+                    <label class="control-label">Payment Status</label>
+                    <select  id="status" name="status" class="custom-select form-select">
+                        <option value="0">Unpaid</option>
+                        <option value="1">Paid</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="card-footer">
+        <div class="d-flex w-100 justify-content-end p-2 gap-1">
+            <a href="/admin/sales" class="btn btn-secondary w-100">Cancel</a>
+            <button form="sales-form" class="btn btn-primary w-100">Submit</button>
+        </div>
+    </div>
+</div>
+<script>
+
+    $(document).ready(function() {
+        const jars =[];
+        const currenturl = window.location.href;
+
+        const params = new URLSearchParams(currenturl.split('?')[1]);
+        const customer = params.get('customer');
+
+        $.ajax({
+            url: `${url}/admin/jars`,
+            method: 'GET',
+            error: e => console.error(e),
+            success: resp => {
+                resp.forEach(element => {
+                    jars.push(element);
+                    $("#jar_type_id").append(`
+                        <option value="${element.id}" data-price=${element.pricing}>
+                            ${element.name}
+                        </option>
+                    `);
+                });
+            }
+        });
+        if(customer){
+            $('[data-bs-title]').html("Manage Sales");
+            $.ajax({
+                url: `${url}/admin/get-customer-record?customer=${customer}`,
+                method: 'GET',
+                error: e => console.error(e),
+                success: resp => {
+                    console.log(resp);
+                    //assign user id 
+                    $("#id").val(resp[0].id);
+                    //assign customer name
+                    $("#customer_name").val(resp[0].customer_name);
+                    $("#type").val(resp[0].type);
+                    $("#delivery_address").val(resp[0].delivery_address);
+                    $("#status").val(resp[0].status);
+
+                    resp.forEach(e => {
+                        
+                        let price = e.price;
+                        let quantity = e.quantity;
+                        var amount = parseFloat(quantity) * parseFloat(price);
+                        var tr = $('<tr class="s-item">')
+                        tr.append("<td class='text-center'><button class='btn btn-danger text-white' type='button' onclick='del_item($(this))'><i class='bi bi-trash'></i></button></td>")
+                        tr.append("<td class='text-center'><input type='hidden' name='quantity[]' value='"+quantity+"'>"+(parseFloat(quantity).toLocaleString("en-US"))+"</td>")
+                        tr.append("<td class='text-center'><input type='hidden' name='jar_type_id[]' value='"+e.jar_type_id+"'>"+(jars.find(j => j.id == e.jar_type_id).name)+"</td>")
+                        tr.append("<td class='text-center'><input type='hidden' name='price[]' value='"+price+"'>"+(parseFloat(price).toLocaleString("en-US"))+"</td>")
+                        tr.append("<td class='text-center'><input type='hidden' name='total_amount[]' value='"+e.amount+"'>"+(parseFloat(amount).toLocaleString("en-US"))+"</td>")
+                        $('#item-list tbody').append(tr);
+                        calculate_total();
+                        $('#quantity').val('');
+                        $('#jar_type_id').val('').trigger('change');
+                    });
+                }
+            });
+
+        }else{
+            $('[data-bs-title]').html("Add Sales");
+        }
+
+    });
+
+    function calculate_total(){
+        total = 0 ; 
+        $('.s-item').each(function(){
+            var amount = $(this).find('[name="total_amount[]"]').val()
+            total += parseFloat(amount)
+        })
+        $('#grand_total').text(parseFloat(total).toLocaleString('en-US'))
+        $('[name="amount"]').val(total)
+    }
+
+    function del_item(_this){
+        _this.closest('tr').remove()
+        calculate_total();
+    }
+
+    $(function(){
+        if('<?php echo isset($id) ? 1 : 0 ?>' == 1){
+            calculate_total()
+            if($('#type').val() == 1){
+                $('#da-holder').hide('slow')
+                $('#delivery_address').attr('required',false)
+            }else{
+                $('#da-holder').show('slow')
+                $('#delivery_address').attr('required',true)
+            }
+        }
+        $('#type').change(function(){
+            if($(this).val() == 1){
+                $('#da-holder').hide('slow')
+                $('#delivery_address').attr('required',false)
+            }else{
+                $('#da-holder').show('slow')
+                $('#delivery_address').attr('required',true)
+            }
+        })
+        //$('.select2').select2();
+       $('#add_to_list').click(function(){
+            
+            let submittable = true;
+            var jar_type_id = $('#jar_type_id').val();
+            var quantity = $('#quantity').val();
+
+            console.log(jar_type_id);
+            if(jar_type_id == '' || jar_type_id == null){
+                $('#jar_type_id').addClass('is-invalid');
+                //alert_toast(' Please Select Jar Type first',"warning");
+                submittable = false;
+            }else{
+                $('#jar_type_id').removeClass('is-invalid');
+            }
+            if(quantity <= 0){
+                $('#quantity').addClass('is-invalid');
+                submittable = false;
+                //alert_toast(' Please enter valid quantity',"warning");
+            }else{
+                $('#quantity').removeClass('is-invalid');
+            }
+
+            if (!submittable) return;
+
+            var jar_type = $('#jar_type_id option[value="'+jar_type_id+'"]').text()
+            var price = $('#jar_type_id option[value="'+jar_type_id+'"]').attr('data-price')
+
+            var amount = parseFloat(quantity) * parseFloat(price);
+            var tr = $('<tr class="s-item">')
+            tr.append("<td class='text-center'><button class='btn btn-danger text-white' type='button' onclick='del_item($(this))'><i class='bi bi-trash'></i></button></td>")
+            tr.append("<td class='text-center'><input type='hidden' name='quantity[]' value='"+quantity+"'>"+(parseFloat(quantity).toLocaleString("en-US"))+"</td>")
+            tr.append("<td class='text-center'><input type='hidden' name='jar_type_id[]' value='"+jar_type_id+"'>"+(jar_type)+"</td>")
+            tr.append("<td class='text-center'><input type='hidden' name='price[]' value='"+price+"'>"+(parseFloat(price).toLocaleString("en-US"))+"</td>")
+            tr.append("<td class='text-center'><input type='hidden' name='total_amount[]' value='"+amount+"'>"+(parseFloat(amount).toLocaleString("en-US"))+"</td>")
+            $('#item-list tbody').append(tr);
+            calculate_total();
+            $('#quantity').val('');
+            $('#jar_type_id').val('').trigger('change');
+       })
+       
+        $('#sales-form').submit(function(e){
+            e.preventDefault();
+            const currenturl = window.location.href;
+            const params = new URLSearchParams(currenturl.split('?')[1]);
+            const customer = params.get('customer');
+
+            let submittable = true;
+            if($('.s-item').length < 1){
+                $('#warning').remove();
+                $('[data-warning]').append(`
+                    <div class="alert alert-danger text-danger d-flex justify-content-between" id="warning">
+                        Please add atleast one item in the selection.
+                        <button class="btn btn-close" data-bs-target="#warning" data-bs-dismiss="alert"></button>
+                    </div>
+                `);
+                submittable = false;
+            }
+
+            if($('#customer_name').val().length == 0){
+                $('#customer_name').addClass('is-invalid');
+                submittable = false;
+            }
+
+            if($('#type').val() == '2' && $('#delivery_address').val().length == 0){
+                $('#delivery_address').addClass('is-invalid');
+                submittable = false;
+            }
+
+            if(!submittable) return;
+
+            if(customer){
+                $.ajax({
+                    url:`${url}/admin/update-sales?customer=${customer}`,
+                    method:'POST',
+                    data:$(this).serialize(),
+                    dataType:'json',
+                    error:err=>{
+                        console.log(err)
+                        //alert_toast("An error occured","error")
+                    },
+                    success:function(resp){
+                        if(resp.status == 'success'){
+                            location.href = '/admin/sales';
+                        }else if(!!resp.msg){
+                            
+                            $('#warning').remove();
+                            $('[data-warning]').append(`
+                                <div class="alert alert-danger text-danger d-flex justify-content-between" id="warning">
+                                    Something went wrong, please try again.
+                                    <button class="btn btn-close" data-bs-target="#warning" data-bs-dismiss="alert"></button>
+                                </div>
+                            `);
+                            
+                        }else{
+                            //alert_toast('An error occured',"error")
+                            console.log(resp)
+                        }
+                    }
+                })
+            }else{
+                $.ajax({
+                    url:`${url}/admin/save-sales`,
+                    method:'POST',
+                    data:$(this).serialize(),
+                    dataType:'json',
+                    error:err=>{
+                        console.log(err)
+                        //alert_toast("An error occured","error")
+                    },
+                    success:function(resp){
+                        if(resp.status == 'success'){
+                            location.href = '/admin/sales';
+                        }else if(!!resp.msg){
+                            
+                            $('#warning').remove();
+                            $('[data-warning]').append(`
+                                <div class="alert alert-danger text-danger d-flex justify-content-between" id="warning">
+                                    Something went wrong, please try again.
+                                    <button class="btn btn-close" data-bs-target="#warning" data-bs-dismiss="alert"></button>
+                                </div>
+                            `);
+                            
+                        }else{
+                            //alert_toast('An error occured',"error")
+                            console.log(resp)
+                        }
+                    }
+                })
+            }
+        })
+    }) 
+
+</script>

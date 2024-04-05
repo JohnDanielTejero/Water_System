@@ -24,7 +24,7 @@
             method: "GET",
             error: e => console.error(e),
             success: resp => {
-                $('[data-sales-total]').html(resp.total ? resp.total : 0);
+                $('[data-sales-total]').html("P" + (resp.total ? resp.total : 0));
             }
         })
     });

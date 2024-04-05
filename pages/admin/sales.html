@@ -2,7 +2,7 @@
 	<div class="card-header">
 		<h3 class="card-title">Sales</h3>
 		<div class="card-tools">
-			<a href="/admin/page-sales/manage_sales" class="btn btn-flat btn-primary"><span class="fas fa-plus"></span>  Create New</a>
+			<a href="/admin/sales/manage-sales" class="btn btn-flat btn-primary"><span class="fas fa-plus"></span>  Create New</a>
 		</div>
 	</div>
 	<div class="card-body">
@@ -45,7 +45,6 @@
             method: "GET",
             error: e => console.error(e),
             success: response => {
-                console.log(response);
                 response.forEach(resp => {
                     $('#sales-listing').append(`
                         <tr>
@@ -57,21 +56,26 @@
                             <td class='text-right'>${resp.total_quantity}</td>
                             <td class='text-right'>${resp.amount}</td>
                             <td align="center">
-                                <button type="button" class="btn btn-flat btn-default btn-sm dropdown-toggle dropdown-icon" data-toggle="dropdown" data-dropdown-items data-bs-target="#action-${resp.id}">
+                                <button type="button" class="btn btn-flat btn-default btn-sm dropdown-toggle dropdown-icon" data-bs-toggle="dropdown" data-dropdown-items data-bs-target="#action-${resp.id}">
                                     Action
                                 </button>
                                 <div class="dropdown-menu" role="menu" id="action-${resp.id}">
-                                <a class="dropdown-item edit_data" href="./?page=sales/manage_sales&id=<?php echo $row['id'] ?>" data-id="<?php echo $row['id'] ?>"> Edit</a>
+                                <a class="dropdown-item edit_data" href="/admin/sales/manage-sales?customer=${resp.id}"> Edit</a>
                                 <a class="dropdown-item delete_data" href="javascript:void(0)" data-id="<?php echo $row['id'] ?>"> Delete</a>
                                 </div>
                             </td>
                         </tr>
                     `);
-                    $("button.btn[data-bs-target='#action-" + resp.id + "']").click(function(){
-                        $($(this).attr('data-bs-target')).toggle();
-                    })
-                   
-                
+
+                    $("button.btn[data-bs-target='#action-" + resp.id + "']").click(
+                        function(){
+                            if( $($(this).attr('data-bs-target')).hasClass("show")){
+                                $($(this).attr('data-bs-target')).addClass("show");
+                            }else{
+                                $($(this).attr('data-bs-target')).removeClass("show");
+                            }
+                        }
+                    );
                 });
             }    
         })

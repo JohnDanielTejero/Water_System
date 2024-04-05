@@ -45,7 +45,24 @@ router.get('/sales', (req, res) => {
   });
 });
 
-//API
+router.get('/sales/manage-sales', (req, res) => {
+  //const { query } = req;
+
+  res.set('Content-Type', 'text/html'); 
+  if(typeof req?.session?.user == "undefined" || typeof req?.session?.user == "null"){
+    res.redirect('/login');
+    return;
+  }
+  fs.readFile(path.join(__dirname, '..') + '/pages/template.html', 'utf8', (err, template) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Error reading template');
+    }
+    adminTemplate(req, res, template, 'manage-sales');
+  });
+});
+
+//API get sales with corresponding total quantity
 router.get('/sales_list', (req, res) => {
   db.query(`
     SELECT s.*, q.total_quantity
@@ -65,15 +82,124 @@ router.get('/sales_list', (req, res) => {
 })
 })
 
-//API
+//API - get total sales
 router.get('/total_sales', (req, res) => {
   const { date } = req.query;
-  db.query("SELECT sum(amount) AS total FROM sales WHERE date(date_created) = ?", [date], (err, result) => {
+  const dateFormat = new Date(date);
+  const year = dateFormat.getFullYear();
+  const month = String(dateFormat.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+  const day = String(dateFormat.getDate()).padStart(2, '0');
+  const formattedDate = `${year}-${month}-${day}`;
+  db.query("SELECT sum(amount) AS total FROM sales WHERE date(date_created) = ?", [formattedDate], (err, result) => {
       if (err){
         console.error(err);
       }else{
-        res.status(200).json(result);
+        res.status(200).json(result[0]);
       }
   })
 });
+
+//API - get types of jar
+router.get('/jars', (req, res) => {
+  db.query("SELECT * FROM jar_types order by `name` asc", (err, result) => {
+    if (err){
+      console.error(err);
+    }else{
+      res.status(200).json(result);
+    }
+  });
+});
+
+//API - save sales
+router.post('/save-sales', (req, res) => {
+  
+  const data = req.body;
+  const date = new Date();
+  db.query(`
+    INSERT INTO sales(customer_name, delivery_address, type, amount, status, date_created, date_updated)
+      VALUES (?, ?, ?, ? ,? ,? ,?);
+  `, [data.customer_name, data.delivery_address, data.type, data.amount, data.status, date, date],
+    (err, result) => {
+      if(!err){
+        const { insertId } = result;
+        data.jar_type_id.forEach((element, index)=> {
+          db.query(`
+            INSERT INTO sales_items(sales_id, jar_type_id, quantity, price, total_amount)
+              VALUES (?, ?, ?, ?, ?);
+          `, [insertId, element, data.quantity[index], data.price[index], data.total_amount[index]],
+            (err, result) => {
+              if (err){
+                console.error(err);
+                return res.status(200).json({"stastus": "unsuccessful"});
+              }  
+            }
+          )
+        });
+        return res.status(200).json({"status": "success"});
+      }
+      return res.status(200).json({"stastus": "unsuccessful"});
+    }
+  );
+});
+
+//API - update sales
+router.post('/update-sales', (req, res) => {
+  const { customer } = req.query;
+  const data = req.body;
+  const date = new Date();
+  db.query(`
+    UPDATE sales SET 
+      customer_name = ?, 
+      delivery_address = ?, 
+      type = ?, 
+      amount = ?, 
+      status = ?, 
+      date_updated = ?
+    WHERE id = ${ customer };
+  `, [data.customer_name, data.delivery_address, data.type, data.amount, data.status, date],
+    (err, result) => {
+      if(!err){
+        
+        db.query(`DELETE FROM sales_items WHERE sales_id = ${customer}`); 
+
+        data.jar_type_id.forEach((element, index) => {
+          db.query(`
+            INSERT INTO sales_items(sales_id, jar_type_id, quantity, price, total_amount)
+              VALUES (?, ?, ?, ?, ?);
+          `, [customer, element, data.quantity[index], data.price[index], data.total_amount[index]],
+            (err, result) => {
+              if (err){
+                console.error(err);
+                return res.status(200).json({"stastus": "unsuccessful"});
+              }  
+            }
+          )
+        });
+        return res.status(200).json({"status": "success"});
+      }
+      return res.status(200).json({"stastus": "unsuccessful"});
+    }
+  );
+});
+
+
+//API - get customer record
+router.get('/get-customer-record', (req, res) => {
+  const { customer } = req.query;
+  
+  db.query(`
+    SELECT *
+    FROM sales s
+    INNER JOIN sales_items si ON s.id = si.sales_id
+    WHERE s.id = ${customer}
+  `, (err,result) => {
+    if(err){ 
+      console.error(err);
+      return;
+    }
+    return res.status(200).json(result);
+  })
+
+});
+
 module.exports = router;
