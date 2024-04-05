@@ -19,53 +19,52 @@
 </style>
 <aside class="main-side bg-dark text-light h-100 overflow-hidden active">
     <div class="d-flex flex-column">
-        <a href="/admin" class="text-white flex align-items-center justify-content-center p-4 header-logo">
+        <a href="/admin" class="text-decoration-none text-white flex align-items-center justify-content-center p-4 header-logo">
             <img src="/uploads/1628916900_water_refilling.png" data-logo-img alt="Store Logo" class="brand-image  elevation-3" style="opacity: .8;width: 2.5rem;height: 2.5rem;max-height: unset">
             <span class="brand-text font-weight-light">Water For Life</span>
         </a>
         <nav class="mt-4">
-            <ul class="nav nav-pills nav-sidebar flex-column text-sm nav-compact nav-flat nav-child-indent nav-collapse-hide-child" data-widget="treeview" role="menu" data-accordion="false">
+            <ul class="d-flex flex-column gap-1 nav nav-pills nav-sidebar flex-column text-sm nav-compact nav-flat nav-child-indent nav-collapse-hide-child" data-widget="treeview" role="menu" data-accordion="false">
              <li class="nav-item dropdown">
-               <a href="/admin" class="nav-link nav-home">
-                 <i class="nav-icon fas fa-tachometer-alt"></i>
-                 <p>
+               <a href="/admin" class="p-3 nav-link nav-home d-flex flex-row gap-1 text-decoration-none text-white align-items-center">
+                 <i class="nav-icon bi bi-speedometer2"></i>
+                 <span>
                    Dashboard
-                 </p>
+                 </span>
                </a>
              </li> 
              
              <li class="nav-item dropdown">
-               <a href="/admin/sales" class="nav-link nav-sales">
-                 <i class="nav-icon fas fa-hand-holding-water"></i>
-                 <p>
+               <a href="/admin/sales" class="p-3 d-flex flex-row gap-2 text-decoration-none text-white nav-link nav-sales">
+                 <i class="nav-icon bi bi-receipt"></i>
+                 <span>
                    Sales
-                 </p>
+                 </span>
                </a>
              </li>
              <li class="nav-item">
-               <a href="#" class="nav-link tree-item nav-maintenance nav-deposit nav-jar_type nav-supplies">
-                 <i class="nav-icon fas fa-th-list"></i>
-                 <p>
+               <a href="#" class="d-flex flex-row gap-2 text-decoration-none accordion bg-secondary rounded-2 text-white p-3 align-items-center" data-bs-target="#operation-tree" data-bs-toggle="collapse">
+                 <i class="nav-icon bi bi-list"></i>
+                 <span>
                    Operations
-                   <i class="right fas fa-angle-left"></i>
-                 </p>
+                 </span>
                </a>
-               <ul class="nav nav-treeview" style="">
-               <li class="nav-item">
-                   <a href="/admin/maintenance" class="nav-link nav-index">
-                     <i class="far fa-circle nav-icon"></i>
-                     <p>Jar Typs & Pricing</p>
+               <ul class="ms-3 mt-2 nav d-flex flex-column border-4 border-secondary" id="operation-tree">
+                <li class="nav-item">
+                   <a href="/admin/jars" class="nav-link nav-index d-flex flex-row gap-2">
+                    <i class="right bi bi-caret-right"></i>
+                     <p>Jar Types & Pricing</p>
+                   </a>
+                 </li>
+                 <li class="nav-item dropdown">
+                   <a href="/admin/reports" class="nav-link nav-reports d-flex flex-row gap-2">
+                    <i class="right bi bi-caret-right"></i>
+                     <p>
+                       Sales Reports
+                     </p>
                    </a>
                  </li>
                </ul>
-             </li>
-             <li class="nav-item dropdown">
-               <a href="/admin/reports" class="nav-link nav-reports">
-                 <i class="nav-icon fas fa-file-invoice"></i>
-                 <p>
-                   Sales Reports
-                 </p>
-               </a>
              </li>
            </ul>
          </nav>

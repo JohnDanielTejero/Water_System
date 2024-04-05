@@ -61,14 +61,30 @@
                                 </button>
                                 <div class="dropdown-menu" role="menu" id="action-${resp.id}">
                                 <a class="dropdown-item edit_data" href="/admin/sales/manage-sales?customer=${resp.id}"> Edit</a>
-                                <a class="dropdown-item delete_data" href="javascript:void(0)" data-id="<?php echo $row['id'] ?>"> Delete</a>
+                                <a class="dropdown-item delete_data" href="" data-delete-target='${resp.id}'> Delete</a>
                                 </div>
                             </td>
                         </tr>
                     `);
+                    $('.delete_data').click(function(e){
+                                e.preventDefault();
+                                //console.log("clicked");
+                                $.ajax({
+                                    url: `${url}/admin/delete-sales?customer=${$(this).attr('data-delete-target')}`,
+                                    method: 'GET',
+                                    error: e => console.error(e),
+                                    success: resp => {
+                                        if (resp.status == "success") {
+                                            //console.log("clicked");
+                                            window.location.reload();
+                                        }
 
+                                    }
+                                });
+                            });
                     $("button.btn[data-bs-target='#action-" + resp.id + "']").click(
                         function(){
+                         
                             if( $($(this).attr('data-bs-target')).hasClass("show")){
                                 $($(this).attr('data-bs-target')).addClass("show");
                             }else{

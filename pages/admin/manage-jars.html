@@ -1,0 +1,103 @@
+<div class="d-flex w-100 h-100 p-5">
+    <form class="d-flex flex-column w-100 gap-2" id="manage-jars" method="post" action="">
+        <input name="jarid" type="text" id="jarid" class="d-none"/>
+        <div class="form-floating">
+            <input type="text" class="form-control" name="name" id="name"  placeholder=""/>
+            <label for="name">name</label>
+            <div class="invalid-feedback">
+                Name is required.
+            </div>
+        </div>
+        <div class="form-floating">
+            <input type="number" class="form-control" name="pricing" id="pricing" placeholder=""/>
+            <label for="pricing">Pricing</label>
+            <div class="invalid-feedback">
+                Pricing should be in correct format.
+            </div>
+        </div>
+        <div class="form-floating">
+            <textarea class="form-control" placeholder="" name="description" id="description" style="height: 300px"></textarea>
+            <label for="description">Description</label>
+            <div class="invalid-feedback">
+                Description is required.
+            </div>
+        </div>
+        <div class="d-flex flex-row gap-2">
+
+            <button class="btn btn-secondary w-100">Cancel</button>
+            <button class="btn btn-primary w-100">Submit</button>
+        </div>
+    </form>
+</div>
+<script defer>
+    $(document).ready(function(){
+        const currenturl = window.location.href;
+
+        const params = new URLSearchParams(currenturl.split('?')[1]);
+        const jar = params.get('jar');
+
+        if(jar != null){
+            $.ajax({
+                url : `${url}/admin/jar?jar=${jar}`,
+                method : 'GET',
+                error: e => console.error(e),
+                success: function(data) {
+                   $('#jarid').val(data[0].id);
+                   $('#name').val(data[0].name);
+                   $('#pricing').val(data[0].pricing);
+                   $('#description').val(data[0].description);
+                }
+            })
+        }
+
+        $("#manage-jars").submit(function(e){
+            e.preventDefault();
+            let submittable = true;
+
+            if($('#name').val().trim().length <= 0){
+                $('#name').addClass('is-invalid');
+                submittable = false;
+            }
+            
+            if($('#pricing').val().trim().length <= 0 || parseFloat($('#pricing').val()) <= 0){
+                $('#pricing').addClass('is-invalid');
+                submittable = false;
+            }
+
+            if($('#description').val().trim().length <= 0){
+                $('#description').addClass('is-invalid');
+                submittable = false;
+            }
+
+            if(!submittable) return;
+
+            if(jar){
+                $.ajax({
+                    
+                    url : `${url}/admin/edit-jar`,
+                    method : 'POST',
+                    data: $(this).serialize(),
+                    error: e => console.error(e),
+                    success: function(data) {
+                        console.log(data);
+                        if (data.status == "success"){
+                            window.location.replace("/admin/jars");
+                        }
+                    }
+                })
+            }else{
+                $.ajax({
+                    url : `${url}/admin/add-jar`,
+                    method : 'POST',
+                    data: $(this).serialize(),
+                    error: e => console.error(e),
+                    success: function(data) {
+                        if (data.status == "success"){
+                            window.location.replace("/admin/jars");
+                        }
+                    }
+                })
+            }
+        })
+    });
+</script>

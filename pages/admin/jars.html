@@ -1,0 +1,83 @@
+<div class="card card-outline card-primary">
+	<div class="card-header">
+		<h3 class="card-title">List of Jar Types & Pricing</h3>
+		<div class="card-tools">
+			<a href="/admin/jars/manage-jars" id="create_new" class="btn btn-flat btn-primary"><span class="fas fa-plus"></span>  Create New</a>
+		</div>
+	</div>
+	<div class="card-body">
+        <div class="container-fluid">
+			<table class="table table-bordered table-stripped" id="indi-list">
+				<colgroup>
+					<col width="5%">
+					<col width="15%">
+					<col width="20%">
+					<col width="35%">
+					<col width="15%">
+					<col width="10%">
+				</colgroup>
+				<thead>
+					<tr>
+						<th class="text-center">#</th>
+						<th>Date Created</th>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Price</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody data-items>
+
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<script>
+	var indiList;
+	$(document).ready(function(){
+        
+        $.ajax({
+            url: `${url}/admin/jars-list`,
+            method: 'GET',
+            error: e => console.error(e),
+            success: resp => {
+                resp.forEach(element => {
+                   $('[data-items]').append(`
+                        <tr>
+							<td class="text-center">${element.id}</td>
+							<td>${new Date(element.date_created).toDateString()}</td>
+							<td>${element.name}</td>
+							<td><p class="m-o truncate">${element.description}</p></td>
+							<td class="text-right">${element.pricing}</td>
+							<td align="center">
+								 <button type="button" class="btn btn-flat btn-default btn-sm dropdown-toggle dropdown-icon" data-bs-toggle="dropdown">
+				                  		Action
+				                  </button>
+				                  <div class="dropdown-menu" role="menu">
+				                    <a class="dropdown-item edit_data" href="/admin/jars/manage-jars?jar=${element.id}"> Edit</a>
+                                    <a class="dropdown-item delete_data" href="" data-delete-target=${element.id}> Delete</a>
+				                  </div>
+							</td>
+						</tr>
+                   `);
+                   $(".delete_data").click(function(e){
+                        e.preventDefault();
+                        $.ajax({
+                            url: `${url}/admin/delete-jar?jar=${$(this).attr('data-delete-target')}`,
+                            method: 'GET',
+                            error: e => console.error(e),
+                            success: resp => {
+                                if (resp.status == "success") {
+                                    window.location.reload();
+                                }
+
+                            }
+                        });
+                   });
+                });
+            }
+        });
+
+    })
+</script> 

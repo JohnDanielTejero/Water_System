@@ -113,7 +113,7 @@
         const customer = params.get('customer');
 
         $.ajax({
-            url: `${url}/admin/jars`,
+            url: `${url}/admin/jars-list`,
             method: 'GET',
             error: e => console.error(e),
             success: resp => {

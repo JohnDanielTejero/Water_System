@@ -62,7 +62,52 @@ router.get('/sales/manage-sales', (req, res) => {
   });
 });
 
-//API get sales with corresponding total quantity
+router.get('/jars', (req, res) => {
+  res.set('Content-Type', 'text/html'); 
+  if(typeof req?.session?.user == "undefined" || typeof req?.session?.user == "null"){
+    res.redirect('/login');
+    return;
+  }
+  fs.readFile(path.join(__dirname, '..') + '/pages/template.html', 'utf8', (err, template) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Error reading template');
+    }
+    adminTemplate(req, res, template, 'jars');
+  });
+
+});
+
+router.get('/jars/manage-jars', (req, res) => {
+  res.set('Content-Type', 'text/html'); 
+  if(typeof req?.session?.user == "undefined" || typeof req?.session?.user == "null"){
+    res.redirect('/login');
+    return;
+  }
+  fs.readFile(path.join(__dirname, '..') + '/pages/template.html', 'utf8', (err, template) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Error reading template');
+    }
+    adminTemplate(req, res, template, 'manage-jars');
+  });
+});
+
+//API - delete sales
+router.get('/delete-sales', (req, res) => {
+  const {customer} = req.query;
+  console.log(customer);
+  db.query(`DELETE FROM sales WHERE id = ${customer}`, (err, result) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    return res.status(200).send({"status" : 'success'});
+  })
+
+});
+
+//API - get sales with corresponding total quantity
 router.get('/sales_list', (req, res) => {
   db.query(`
     SELECT s.*, q.total_quantity
@@ -79,7 +124,7 @@ router.get('/sales_list', (req, res) => {
       }else{
         res.status(200).json(result);
       }
-})
+  })
 })
 
 //API - get total sales
@@ -100,8 +145,8 @@ router.get('/total_sales', (req, res) => {
 });
 
 //API - get types of jar
-router.get('/jars', (req, res) => {
-  db.query("SELECT * FROM jar_types order by `name` asc", (err, result) => {
+router.get('/jars-list', (req, res) => {
+  db.query("SELECT * FROM jar_types order by 1 desc", (err, result) => {
     if (err){
       console.error(err);
     }else{
@@ -182,7 +227,6 @@ router.post('/update-sales', (req, res) => {
   );
 });
 
-
 //API - get customer record
 router.get('/get-customer-record', (req, res) => {
   const { customer } = req.query;
@@ -201,5 +245,79 @@ router.get('/get-customer-record', (req, res) => {
   })
 
 });
+
+//API-  get specific jar
+router.get('/jar', (req, res) => {
+  const { jar } = req.query;
+
+  db.query(`
+    SELECT * FROM jar_types WHERE id = ${jar} LIMIT 1;
+  `, (err,result) => {
+    if(!err){
+      return res.status(200).json(result);
+    } 
+    console.error(err);
+    return res.status(200).json({"message":"unsucessful"});
+  });
+});
+
+//API - add jars
+router.post('/add-jar', (req, res) => {
+  const data = req.body;
+  const date = new Date();
+  db.query(`
+    INSERT INTO jar_types(name, description, pricing, date_created, date_updated)
+      VALUES (?, ?, ?, ? ,?);
+  `, [data.name, data.description, data.pricing, date, date],
+    (err, result) => {
+      if(!err){
+        return res.status(200).json({"status": "success"});
+      }
+      return res.status(200).json({"stastus": "unsuccessful"});
+    }
+  );
+});
+
+//API - edit jars
+router.post('/edit-jar', (req, res) => {
+  console.log(req.body);
+  const {jarid, ...data } = req.body;
+  const date = new Date();
+  db.query(`
+    UPDATE jar_types
+    SET
+      name = ?, 
+      description = ?, 
+      pricing = ?,
+      date_updated = ?
+    WHERE id = ${jarid};
+  `, [data.name, data.description, data.pricing, date],
+    (err, result) => {
+      if(!err){
+        return res.status(200).json({"status": "success"});
+      }
+      console.log(err);
+      return res.status(200).json({"stastus": "unsuccessful"});
+    }
+  );
+});
+
+//API - delete jar
+router.get('/delete-jar', (req, res) => {
+  const { jar } = req.query;
+  db.query(`
+    DELETE FROM jar_types
+    WHERE id = ${jar};
+  `,
+    (err, result) => {
+      if(!err){
+        return res.status(200).json({"status": "success"});
+      }
+      console.log(err);
+      return res.status(200).json({"stastus": "unsuccessful"});
+    }
+  );
+});
+
 
 module.exports = router;
