@@ -43,8 +43,6 @@
           error: e => console.error(e),
           success: resp  => {
             if (resp.status == "success") {
-              console.log(resp.user);
-              localStorage.setItem("user", JSON.stringify(resp.user))
               if (resp.user.role == "admin"){
                 window.location.replace("/admin");
               }else{

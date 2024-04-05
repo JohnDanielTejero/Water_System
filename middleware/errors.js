@@ -1,6 +1,14 @@
 const path = require('path');
 const fs = require('fs');
 
+/**
+ * middleware mainly used to redirect user to default fallback.
+ * Template.html is still used, then the 404.html is appended.
+ * @param {*} err 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
 module.exports = (err, req, res, next) => {
     //define error status here
     if (err.status === 404) {

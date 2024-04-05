@@ -15,21 +15,23 @@ router.use(bodyParser.urlencoded({ extended: true }));
  *   
  * });
  */
-router.get('/', (req, res) =>{
-  if(typeof req?.session?.user == "undefined" || typeof req?.session?.user == "null"){
-    res.redirect('/login');
-    return;
-  }
 
-  res.status(200).send("<h1>hello</h1>");
-});
+//no client yet, this is unimplemented
+// router.get('/', (req, res) =>{
+//   if(typeof req?.session?.user == "undefined" || typeof req?.session?.user == "null"){
+//     res.redirect('/login');
+//     return;
+//   }
 
-//API, retrieving current user in session
+//   res.status(200).send("<h1>hello</h1>");
+// });
+
+//API - retrieving current user in session
 router.get('/current-user', (req, res) =>{
   res.status(200).json(req.session.user);
 })
 
-//API for error redirection
+//redirects user to appropriate dashboard
 router.get('/redirection', (req, res) => {
   if(typeof req?.session?.user == "undefined" || typeof req?.session?.user == "null"){
     res.status(200).redirect('/login');
@@ -43,6 +45,7 @@ router.get('/redirection', (req, res) => {
   res.status(200).redirect('/');
 });
 
+//renders login page
 router.get('/login', (req, res) => { 
     res.set('Content-Type', 'text/html'); 
     //using file read, retrieve the file of template.html
@@ -68,7 +71,7 @@ router.get('/login', (req, res) => {
     
 }); 
 
-//API: See script.js line 24
+//API for login: See login.html line 46
 router.post('/login', (req, res) => {
   const {username, password } = req.body;
   //bad practice, change this to using hash and comparing pass with hashed pass, but for demonstration sake we'll keep it like this
@@ -87,7 +90,7 @@ router.post('/login', (req, res) => {
     })
 });
 
-//API: redirection lang
+//redirection to login, invalidates session
 router.get('/logout', (req, res) => {
   if(typeof req.session?.user != "undefined" && typeof req?.session?.user != "null"){
     req.session.user = null;

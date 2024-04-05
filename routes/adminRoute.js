@@ -1,12 +1,14 @@
-const express = require('express');
-const router = express.Router();
+const express = require('express'); //require express to access router.
+const router = express.Router(); //create router instance
 const db = require('../constants/dbCon.js'); //require if needed:
 const path = require('path');
-const bodyParser = require('body-parser');
+const bodyParser = require('body-parser'); //required to get serialized payload
 const fs = require('fs');
-const { adminTemplate } = require('../constants/render-page.js');
+const { adminTemplate } = require('../constants/render-page.js'); //utility for rendering admin page
 
+//requires the router to use bodyParse to ensure that serialized payload is read.
 router.use(bodyParser.urlencoded({ extended: true }));
+
 /**
  * Specify requests GET, POST and the corresponding URL
  * 
@@ -15,6 +17,8 @@ router.use(bodyParser.urlencoded({ extended: true }));
  *   
  * });
  */
+
+//retrieves the dashboard page
 router.get('/', (req, res) => { 
   res.set('Content-Type', 'text/html');
   if(typeof req?.session?.user == "undefined" || typeof req?.session?.user == "null"){
@@ -30,6 +34,7 @@ router.get('/', (req, res) => {
   });
 }); 
 
+//retrieves the sales page
 router.get('/sales', (req, res) => {
   res.set('Content-Type', 'text/html'); 
   if(typeof req?.session?.user == "undefined" || typeof req?.session?.user == "null"){
@@ -45,6 +50,7 @@ router.get('/sales', (req, res) => {
   });
 });
 
+//retrieves the manage sales page
 router.get('/sales/manage-sales', (req, res) => {
 
   res.set('Content-Type', 'text/html'); 
@@ -61,6 +67,7 @@ router.get('/sales/manage-sales', (req, res) => {
   });
 });
 
+//retrieves the jars page
 router.get('/jars', (req, res) => {
   res.set('Content-Type', 'text/html'); 
   if(typeof req?.session?.user == "undefined" || typeof req?.session?.user == "null"){
@@ -77,6 +84,7 @@ router.get('/jars', (req, res) => {
 
 });
 
+//retrieves the manage jars page
 router.get('/jars/manage-jars', (req, res) => {
   res.set('Content-Type', 'text/html'); 
   if(typeof req?.session?.user == "undefined" || typeof req?.session?.user == "null"){
@@ -92,6 +100,7 @@ router.get('/jars/manage-jars', (req, res) => {
   });
 });
 
+//retrieves the reports page
 router.get('/reports', (req, res) => {
   res.set('Content-Type', 'text/html'); 
   if(typeof req?.session?.user == "undefined" || typeof req?.session?.user == "null"){
@@ -107,6 +116,11 @@ router.get('/reports', (req, res) => {
   });
 });
 
+/**
+ * API, since we are using AJAX, it will mostly deal with JSON
+ * allows client and server to interact without refreshing the page
+ * you can see the response via the success callback found in the ajax in jQuery
+ */
 //API - delete sales
 router.get('/delete-sales', (req, res) => {
   const {customer} = req.query;

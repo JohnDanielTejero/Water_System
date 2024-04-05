@@ -1,19 +1,20 @@
 
-const express = require('express'); 
-require('dotenv').config();
-const path = require('path');   
+const express = require('express'); //require to utilize expressJS server
+require('dotenv').config(); //require to utilize .env key/value pairs
+const path = require('path');  //require to retrieve directory path
 
-require('express-static');
-const app = express(); 
-const router = require('./routes/route.config.js');
-const errorInterceptor = require('./middleware/errors.js');
-const session = require('express-session');
+require('express-static'); //require to use static files/assets within the project
 
-const imagePath = path.join(__dirname, '/uploads');
-const bootstrapPath = path.join(__dirname, '/node_modules/bootstrap');
-const bootstrapIconsPath = path.join(__dirname, '/node_modules/bootstrap-icons');
-const jQueryPath = path.join(__dirname, '/node_modules/jquery');
-const scriptsPath = path.join(__dirname, '/pages/scripts');
+const app = express();  //creating a new instance of expressJS server
+const router = require('./routes/route.config.js'); //require to connect router which is seen on route.config.js 
+const errorInterceptor = require('./middleware/errors.js'); //require for middleware (ensure unregistered routes are redirected to 404 page as fallback)
+const session = require('express-session'); //require to store user session 
+
+const imagePath = path.join(__dirname, '/uploads'); //root directory of uploads
+const bootstrapPath = path.join(__dirname, '/node_modules/bootstrap'); //root directory of bootstrap 
+const bootstrapIconsPath = path.join(__dirname, '/node_modules/bootstrap-icons');//root directory of bootstrap icons
+const jQueryPath = path.join(__dirname, '/node_modules/jquery'); //root directory of jquery
+const scriptsPath = path.join(__dirname, '/pages/scripts'); //root directory of custom js scripts for frontend
 
 /**
  * using express-static library so we can access the static files of the project,
@@ -25,6 +26,11 @@ app.use('/bootstrap-icons', express.static(bootstrapIconsPath));
 app.use('/jquery', express.static(jQueryPath));
 app.use('/scripts', express.static(scriptsPath));
 
+/**
+ * As you can see, the app will "use" the session, this is to simply 
+ * notify the server that it will be a stateful application. Context of user
+ * can be accessed via session.
+ */
 app.use(session({
     secret: process.env.APP_SECRET, 
     resave: false,

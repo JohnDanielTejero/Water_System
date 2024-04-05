@@ -1,6 +1,14 @@
 const path = require('path');
 const fs = require('fs');
 
+/**
+ * Reduce redundant code when rendering admin page
+ * template.html gets read,
+ * index.html gets written inside template
+ * other utilities such as sidenav, topnav is later written on index.html
+ * response is sent to server with the final written html code.
+ * Reason for deeply nested: Does not support async, await,
+ */
 function adminTemplate(req, res, template, page) {
     fs.readFile(path.join(__dirname, '..') + '/pages/admin/index.html', 'utf8', (err, content) => {
         if (err) {
