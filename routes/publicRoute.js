@@ -17,14 +17,28 @@ router.use(bodyParser.urlencoded({ extended: true }));
  */
 
 //no client yet, this is unimplemented
-// router.get('/', (req, res) =>{
-//   if(typeof req?.session?.user == "undefined" || typeof req?.session?.user == "null"){
-//     res.redirect('/login');
-//     return;
-//   }
+router.get('/', (req, res) =>{
+  fs.readFile(path.join(__dirname, '..') + '/pages/template.html', 'utf8', (err, template) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Error reading template');
+    }
 
-//   res.status(200).send("<h1>hello</h1>");
-// });
+    //using file read, retrieve the actual file
+    fs.readFile(path.join(__dirname, '..') + '/pages/public/client-order-interface.html', 'utf8', (err, content) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).send('Error reading content');
+      }
+
+      // Replace the placeholder with the content
+      const finalHtml = template.replace(/<div id="main-content"><\/div>/, content);
+
+      res.status(200).send(finalHtml);
+    });
+});
+  // res.status(200).send("<h1>hello</h1>");
+});
 
 //API - retrieving current user in session
 router.get('/current-user', (req, res) =>{
@@ -71,6 +85,14 @@ router.get('/login', (req, res) => {
     
 }); 
 
+//redirection to login, invalidates session
+router.get('/logout', (req, res) => {
+  if(typeof req.session?.user != "undefined" && typeof req?.session?.user != "null"){
+    req.session.user = null;
+  }
+  res.status(200).redirect('/login');
+});
+
 //API for login: See login.html line 46
 router.post('/login', (req, res) => {
   const {username, password } = req.body;
@@ -90,12 +112,37 @@ router.post('/login', (req, res) => {
     })
 });
 
-//redirection to login, invalidates session
-router.get('/logout', (req, res) => {
-  if(typeof req.session?.user != "undefined" && typeof req?.session?.user != "null"){
-    req.session.user = null;
-  }
-  res.status(200).redirect('/login');
+//API - save sales for client side
+router.post('/add-order', (req, res) => {
+  
+  const data = req.body;
+  const date = new Date();
+  db.query(`
+    INSERT INTO sales(customer_name, delivery_address, type, amount, status, date_created, date_updated)
+      VALUES (?, ?, ?, ? ,? ,? ,?);
+  `, [data.customer_name, data.delivery_address, data.type, data.amount, data.status, date, date],
+    (err, result) => {
+      if(!err){
+        const { insertId } = result;
+        data.jar_type_id.forEach((element, index)=> {
+          db.query(`
+            INSERT INTO sales_items(sales_id, jar_type_id, quantity, price, total_amount)
+              VALUES (?, ?, ?, ?, ?);
+          `, [insertId, element, data.quantity[index], data.price[index], data.total_amount[index]],
+            (err, result) => {  
+              if (err){
+                console.error(err);
+                return res.status(200).json({"stastus": "unsuccessful"});
+              }  
+            }
+          )
+        });
+        return res.status(200).json({"status": "success"});
+      }
+      return res.status(200).json({"stastus": "unsuccessful"});
+    }
+  );
 });
+
 
 module.exports = router;

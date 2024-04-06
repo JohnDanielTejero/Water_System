@@ -1,105 +1,105 @@
-<div class="card card-outline card-primary p-2">
-    <h3 class="card-title" data-bs-title></h3>
-    </div>
-    <div class="card-body p-2">
-        <div class="container-fluid">
-            <form id="sales-form">
-                <input type="hidden" name="id" id="id" value="">
-                <div class="row">
-                    <div class="form-group col-sm-6">
-                        <label class="control-label">Customer Name</label>
-                        <input type="text" name="customer_name" class="form-control" id="customer_name" reqiured value="">
-                        <div class="invalid-feedback">
-                            Invalid Customer Name
-                        </div>
-                    </div>
-                    <div class="form-group col-sm-6">
-                        <label class="control-label">Type</label>
-                        <select class="form-control" id="type" name="type" class="custom-select select2" >
-                            <option value="1">Walk-In</option>
-                            <option value="2">For Delivery</option>
-                        </select>
-                        <div class="invalid-feedback">
-                            Please select an option.
-                        </div>
+<div class="w-100 h-100 d-flex flex-column">
+    <nav class="bg bg-dark d-flex flex-row justify-content-between p-2 text-white align-items-center" style="height: 5rem;">
+        <span class="d-flex flex-row gap-2 h-100 align-items-center">
+            <img src="/uploads/1628916900_water_refilling.png" class="h-100">
+            <span>
+                Water For Life - Water Refilling Station
+            </span>
+        </span>
+    </nav>
+    <div class="container p-3">
+        <h2>
+            Order Sale
+        </h2>
+        <form id="sales-form">
+            <input type="hidden" name="id" id="id" value="">
+            <input type="hidden" name="status" id="status" value="0">
+            <div class="row">
+                <div class="form-group col-sm-6">
+                    <label class="control-label">Customer Name</label>
+                    <input type="text" name="customer_name" class="form-control" id="customer_name" reqiured value="">
+                    <div class="invalid-feedback">
+                        Invalid Customer Name
                     </div>
                 </div>
-                <div class="row" style="display:none" id="da-holder">
-                    <div class="form-group col-sm-6">
-                        <label class="control-label">Delivery Address</label>
-                        <textarea type="text" rows="2" style="resize:none" name="delivery_address" class="form-control" id="delivery_address"></textarea>
-                        <div class="invalid-feedback">
-                            Invalid Customer Name
-                        </div>
-                    </div>
-                </div>
-                <hr>
-                <div class="row align-items-end">
-                    <div class="form-group col-sm-4">
-                        <label class="control-label">Jar Type</label>
-                        <select  id="jar_type_id" class="custom-select select2 form-select">
-                            <option value="" disabled selected>Please Select</option>
-                        </select>
-                        <div class="invalid-feedback">
-                            Please select an option.
-                        </div>
-                    </div>
-                    <div class="form-group col-sm-4">
-                        <label class="control-label">Quantity</label>
-                        <input type="number" min="1" class="form-control" id="quantity">
-                        <div class="invalid-feedback">
-                            Please indicate the proper quantity
-                        </div>
-                    </div>
-                    <div class="col-sm-2 d-flex flex-column">
-                        <button class="w-100 h-100 btn btn-primary btn-flat" type="button" id="add_to_list"><i class="fa fa-plus"></i> Add</button>
-                    </div>
-                </div>
-                <hr>
-                <table class="table table-bordered table-striped" id="item-list">
-                    <colgroup>
-                        <col width="5%">
-                        <col width="15%">
-                        <col width="30%">
-                        <col width="25%">
-                        <col width="25%">
-                    </colgroup>
-                    <thead>
-                        <div class="d-block" data-warning>
-                        </div>
-                        <tr>
-                            <th></th>
-                            <th>QTY</th>
-                            <th>Jar Type</th>
-                            <th>Price</th>
-                            <th>Total Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody data-item-display>
-                    
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <th colspan='2' class="text-center">Total <input type="hidden" name="amount"> </th>
-                            <th colspan = '4'class="text-right" id="grand_total"></th>
-                        </tr>
-                    </tfoot>
-                </table>
-                <hr>
-                <div class="form-group col-sm-4">
-                    <label class="control-label">Payment Status</label>
-                    <select  id="status" name="status" class="custom-select form-select">
-                        <option value="0">Unpaid</option>
-                        <option value="1">Paid</option>
+                <div class="form-group col-sm-6">
+                    <label class="control-label">Type</label>
+                    <select class="form-control" id="type" name="type" class="custom-select select2" >
+                        <option value="1">Walk-In</option>
+                        <option value="2">For Delivery</option>
                     </select>
+                    <div class="invalid-feedback">
+                        Please select an option.
+                    </div>
                 </div>
-            </form>
-        </div>
-    </div>
-    <div class="card-footer">
-        <div class="d-flex w-100 justify-content-end p-2 gap-1">
-            <a href="/admin/sales" class="btn btn-secondary w-100">Cancel</a>
-            <button form="sales-form" class="btn btn-primary w-100">Submit</button>
+            </div>
+            <div class="row" style="display:none" id="da-holder">
+                <div class="form-group col-sm-6">
+                    <label class="control-label">Delivery Address</label>
+                    <textarea type="text" rows="2" style="resize:none" name="delivery_address" class="form-control" id="delivery_address"></textarea>
+                    <div class="invalid-feedback">
+                        Invalid Customer Name
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="row align-items-end">
+                <div class="form-group col-sm-4">
+                    <label class="control-label">Jar Type</label>
+                    <select  id="jar_type_id" class="custom-select select2 form-select">
+                        <option value="" disabled selected>Please Select</option>
+                    </select>
+                    <div class="invalid-feedback">
+                        Please select an option.
+                    </div>
+                </div>
+                <div class="form-group col-sm-4">
+                    <label class="control-label">Quantity</label>
+                    <input type="number" min="1" class="form-control" id="quantity">
+                    <div class="invalid-feedback">
+                        Please indicate the proper quantity
+                    </div>
+                </div>
+                <div class="col-sm-2 d-flex flex-column">
+                    <button class="w-100 h-100 btn btn-primary btn-flat" type="button" id="add_to_list"><i class="fa fa-plus"></i> Add</button>
+                </div>
+            </div>
+            <hr>
+            <table class="table table-bordered table-striped" id="item-list">
+                <colgroup>
+                    <col width="5%">
+                    <col width="15%">
+                    <col width="30%">
+                    <col width="25%">
+                    <col width="25%">
+                </colgroup>
+                <thead>
+                    <div class="d-block" data-warning>
+                    </div>
+                    <tr>
+                        <th></th>
+                        <th>QTY</th>
+                        <th>Jar Type</th>
+                        <th>Price</th>
+                        <th>Total Amount</th>
+                    </tr>
+                </thead>
+                <tbody data-item-display>
+                
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan='2' class="text-center">Total <input type="hidden" name="amount"> </th>
+                        <th colspan = '4'class="text-right" id="grand_total"></th>
+                    </tr>
+                </tfoot>
+            </table>
+            <hr>
+        </form>
+        <div class="card-footer">
+            <div class="d-flex w-100 justify-content-end p-2 gap-1">
+                <button form="sales-form" class="btn btn-primary w-100">Submit</button>
+            </div>
         </div>
     </div>
 </div>
@@ -305,7 +305,7 @@
                 })
             }else{
                 $.ajax({
-                    url:`${url}/admin/save-sales`,
+                    url:`${url}/add-order`,
                     method:'POST',
                     data:$(this).serialize(),
                     dataType:'json',
@@ -315,7 +315,7 @@
                     },
                     success:function(resp){
                         if(resp.status == 'success'){
-                            location.href = '/admin/sales';
+                            location.reload();
                         }else if(!!resp.msg){
                             
                             $('#warning').remove();
