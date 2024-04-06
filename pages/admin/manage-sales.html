@@ -105,8 +105,8 @@
 </div>
 <script>
 
+    const jars =[];
     $(document).ready(function() {
-        const jars =[];
         const currenturl = window.location.href;
 
         const params = new URLSearchParams(currenturl.split('?')[1]);
@@ -125,9 +125,7 @@
                         </option>
                     `);
                 });
-            }
-        });
-        if(customer){
+                if(customer){
             $('[data-bs-title]').html("Manage Sales");
             $.ajax({
                 url: `${url}/admin/get-customer-record?customer=${customer}`,
@@ -144,7 +142,6 @@
                     $("#status").val(resp[0].status);
 
                     resp.forEach(e => {
-                        
                         let price = e.price;
                         let quantity = e.quantity;
                         var amount = parseFloat(quantity) * parseFloat(price);
@@ -165,6 +162,45 @@
         }else{
             $('[data-bs-title]').html("Add Sales");
         }
+            }
+        });
+        // if(customer){
+        //     $('[data-bs-title]').html("Manage Sales");
+        //     $.ajax({
+        //         url: `${url}/admin/get-customer-record?customer=${customer}`,
+        //         method: 'GET',
+        //         error: e => console.error(e),
+        //         success: resp => {
+        //             console.log(resp);
+        //             //assign user id 
+        //             $("#id").val(resp[0].id);
+        //             //assign customer name
+        //             $("#customer_name").val(resp[0].customer_name);
+        //             $("#type").val(resp[0].type);
+        //             $("#delivery_address").val(resp[0].delivery_address);
+        //             $("#status").val(resp[0].status);
+
+        //             resp.forEach(e => {
+        //                 let price = e.price;
+        //                 let quantity = e.quantity;
+        //                 var amount = parseFloat(quantity) * parseFloat(price);
+        //                 var tr = $('<tr class="s-item">')
+        //                 tr.append("<td class='text-center'><button class='btn btn-danger text-white' type='button' onclick='del_item($(this))'><i class='bi bi-trash'></i></button></td>")
+        //                 tr.append("<td class='text-center'><input type='hidden' name='quantity[]' value='"+quantity+"'>"+(parseFloat(quantity).toLocaleString("en-US"))+"</td>")
+        //                 tr.append("<td class='text-center'><input type='hidden' name='jar_type_id[]' value='"+e.jar_type_id+"'>"+(jars.find(j => j.id == e.jar_type_id).name)+"</td>")
+        //                 tr.append("<td class='text-center'><input type='hidden' name='price[]' value='"+price+"'>"+(parseFloat(price).toLocaleString("en-US"))+"</td>")
+        //                 tr.append("<td class='text-center'><input type='hidden' name='total_amount[]' value='"+e.amount+"'>"+(parseFloat(amount).toLocaleString("en-US"))+"</td>")
+        //                 $('#item-list tbody').append(tr);
+        //                 calculate_total();
+        //                 $('#quantity').val('');
+        //                 $('#jar_type_id').val('').trigger('change');
+        //             });
+        //         }
+        //     });
+
+        // }else{
+        //     $('[data-bs-title]').html("Add Sales");
+        // }
 
     });
 

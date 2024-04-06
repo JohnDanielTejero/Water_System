@@ -106,19 +106,15 @@
 <script>
 
     $(document).ready(function() {
-        const jars =[];
-        const currenturl = window.location.href;
-
-        const params = new URLSearchParams(currenturl.split('?')[1]);
-        const customer = params.get('customer');
-
+      
+        console.log(`${url}/jars-list`)
         $.ajax({
-            url: `${url}/admin/jars-list`,
+            url: `${url}/jars-list`,
             method: 'GET',
             error: e => console.error(e),
             success: resp => {
+                console.log(resp);
                 resp.forEach(element => {
-                    jars.push(element);
                     $("#jar_type_id").append(`
                         <option value="${element.id}" data-price=${element.pricing}>
                             ${element.name}
@@ -127,45 +123,7 @@
                 });
             }
         });
-        if(customer){
-            $('[data-bs-title]').html("Manage Sales");
-            $.ajax({
-                url: `${url}/admin/get-customer-record?customer=${customer}`,
-                method: 'GET',
-                error: e => console.error(e),
-                success: resp => {
-                    console.log(resp);
-                    //assign user id 
-                    $("#id").val(resp[0].id);
-                    //assign customer name
-                    $("#customer_name").val(resp[0].customer_name);
-                    $("#type").val(resp[0].type);
-                    $("#delivery_address").val(resp[0].delivery_address);
-                    $("#status").val(resp[0].status);
-
-                    resp.forEach(e => {
-                        
-                        let price = e.price;
-                        let quantity = e.quantity;
-                        var amount = parseFloat(quantity) * parseFloat(price);
-                        var tr = $('<tr class="s-item">')
-                        tr.append("<td class='text-center'><button class='btn btn-danger text-white' type='button' onclick='del_item($(this))'><i class='bi bi-trash'></i></button></td>")
-                        tr.append("<td class='text-center'><input type='hidden' name='quantity[]' value='"+quantity+"'>"+(parseFloat(quantity).toLocaleString("en-US"))+"</td>")
-                        tr.append("<td class='text-center'><input type='hidden' name='jar_type_id[]' value='"+e.jar_type_id+"'>"+(jars.find(j => j.id == e.jar_type_id).name)+"</td>")
-                        tr.append("<td class='text-center'><input type='hidden' name='price[]' value='"+price+"'>"+(parseFloat(price).toLocaleString("en-US"))+"</td>")
-                        tr.append("<td class='text-center'><input type='hidden' name='total_amount[]' value='"+e.amount+"'>"+(parseFloat(amount).toLocaleString("en-US"))+"</td>")
-                        $('#item-list tbody').append(tr);
-                        calculate_total();
-                        $('#quantity').val('');
-                        $('#jar_type_id').val('').trigger('change');
-                    });
-                }
-            });
-
-        }else{
-            $('[data-bs-title]').html("Add Sales");
-        }
-
+    
     });
 
     function calculate_total(){
@@ -246,9 +204,6 @@
        
         $('#sales-form').submit(function(e){
             e.preventDefault();
-            const currenturl = window.location.href;
-            const params = new URLSearchParams(currenturl.split('?')[1]);
-            const customer = params.get('customer');
 
             let submittable = true;
             if($('.s-item').length < 1){
@@ -274,65 +229,36 @@
 
             if(!submittable) return;
 
-            if(customer){
-                $.ajax({
-                    url:`${url}/admin/update-sales?customer=${customer}`,
-                    method:'POST',
-                    data:$(this).serialize(),
-                    dataType:'json',
-                    error:err=>{
-                        console.log(err)
-                        //alert_toast("An error occured","error")
-                    },
-                    success:function(resp){
-                        if(resp.status == 'success'){
-                            location.href = '/admin/sales';
-                        }else if(!!resp.msg){
-                            
-                            $('#warning').remove();
-                            $('[data-warning]').append(`
-                                <div class="alert alert-danger text-danger d-flex justify-content-between" id="warning">
-                                    Something went wrong, please try again.
-                                    <button class="btn btn-close" data-bs-target="#warning" data-bs-dismiss="alert"></button>
-                                </div>
-                            `);
-                            
-                        }else{
-                            //alert_toast('An error occured',"error")
-                            console.log(resp)
-                        }
+            
+            $.ajax({
+                url:`${url}/add-order`,
+                method:'POST',
+                data:$(this).serialize(),
+                dataType:'json',
+                error:err=>{
+                    console.log(err)
+                    //alert_toast("An error occured","error")
+                },
+                success:function(resp){
+                    if(resp.status == 'success'){
+                        location.reload();
+                    }else if(!!resp.msg){
+                        
+                        $('#warning').remove();
+                        $('[data-warning]').append(`
+                            <div class="alert alert-danger text-danger d-flex justify-content-between" id="warning">
+                                Something went wrong, please try again.
+                                <button class="btn btn-close" data-bs-target="#warning" data-bs-dismiss="alert"></button>
+                            </div>
+                        `);
+                        
+                    }else{
+                        //alert_toast('An error occured',"error")
+                        console.log(resp)
                     }
-                })
-            }else{
-                $.ajax({
-                    url:`${url}/add-order`,
-                    method:'POST',
-                    data:$(this).serialize(),
-                    dataType:'json',
-                    error:err=>{
-                        console.log(err)
-                        //alert_toast("An error occured","error")
-                    },
-                    success:function(resp){
-                        if(resp.status == 'success'){
-                            location.reload();
-                        }else if(!!resp.msg){
-                            
-                            $('#warning').remove();
-                            $('[data-warning]').append(`
-                                <div class="alert alert-danger text-danger d-flex justify-content-between" id="warning">
-                                    Something went wrong, please try again.
-                                    <button class="btn btn-close" data-bs-target="#warning" data-bs-dismiss="alert"></button>
-                                </div>
-                            `);
-                            
-                        }else{
-                            //alert_toast('An error occured',"error")
-                            console.log(resp)
-                        }
-                    }
-                })
-            }
+                }
+            })
+            
         })
     }) 
 

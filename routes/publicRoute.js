@@ -112,6 +112,17 @@ router.post('/login', (req, res) => {
     })
 });
 
+//API - get types of jar
+router.get('/jars-list', (req, res) => {
+  db.query("SELECT * FROM jar_types order by 1 desc", (err, result) => {
+    if (err){
+      console.error(err);
+    }else{
+      res.status(200).json(result);
+    }
+  });
+});
+
 //API - save sales for client side
 router.post('/add-order', (req, res) => {
   
@@ -143,6 +154,7 @@ router.post('/add-order', (req, res) => {
     }
   );
 });
+
 
 
 module.exports = router;

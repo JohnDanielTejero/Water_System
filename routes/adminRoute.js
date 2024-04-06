@@ -21,7 +21,7 @@ router.use(bodyParser.urlencoded({ extended: true }));
 //retrieves the dashboard page
 router.get('/', (req, res) => { 
   res.set('Content-Type', 'text/html');
-  if(typeof req?.session?.user == "undefined" || typeof req?.session?.user == "null"){
+  if(typeof req.session.user == "undefined" || typeof req.session.user == "null"){
     res.redirect('/login');
     return;
   }
@@ -37,7 +37,7 @@ router.get('/', (req, res) => {
 //retrieves the sales page
 router.get('/sales', (req, res) => {
   res.set('Content-Type', 'text/html'); 
-  if(typeof req?.session?.user == "undefined" || typeof req?.session?.user == "null"){
+  if(typeof req.session.user == "undefined" || typeof req.session.user == "null"){
     res.redirect('/login');
     return;
   }
@@ -54,7 +54,7 @@ router.get('/sales', (req, res) => {
 router.get('/sales/manage-sales', (req, res) => {
 
   res.set('Content-Type', 'text/html'); 
-  if(typeof req?.session?.user == "undefined" || typeof req?.session?.user == "null"){
+  if(typeof req.session.user == "undefined" || typeof req.session.user == "null"){
     res.redirect('/login');
     return;
   }
@@ -70,7 +70,7 @@ router.get('/sales/manage-sales', (req, res) => {
 //retrieves the jars page
 router.get('/jars', (req, res) => {
   res.set('Content-Type', 'text/html'); 
-  if(typeof req?.session?.user == "undefined" || typeof req?.session?.user == "null"){
+  if(typeof req.session.user == "undefined" || typeof req.session.user == "null"){
     res.redirect('/login');
     return;
   }
@@ -87,7 +87,7 @@ router.get('/jars', (req, res) => {
 //retrieves the manage jars page
 router.get('/jars/manage-jars', (req, res) => {
   res.set('Content-Type', 'text/html'); 
-  if(typeof req?.session?.user == "undefined" || typeof req?.session?.user == "null"){
+  if(typeof req.session.user == "undefined" || typeof req.session.user == "null"){
     res.redirect('/login');
     return;
   }
@@ -103,7 +103,7 @@ router.get('/jars/manage-jars', (req, res) => {
 //retrieves the reports page
 router.get('/reports', (req, res) => {
   res.set('Content-Type', 'text/html'); 
-  if(typeof req?.session?.user == "undefined" || typeof req?.session?.user == "null"){
+  if(typeof req.session.user == "undefined" || typeof req.session.user == "null"){
     res.redirect('/login');
     return;
   }
