@@ -264,12 +264,40 @@ router.get('/get-customer-record', (req, res) => {
     FROM sales s
     INNER JOIN sales_items si ON s.id = si.sales_id
     WHERE s.id = ${customer}
-  `, (err,result) => {
+  `, (err,rows) => {
     if(err){ 
       console.error(err);
       return;
     }
-    return res.status(200).json(result);
+
+    const result = rows.reduce((acc, current) => {
+      //checks if an accumulator with the key does not exist
+      if(!acc[current.sales_id]){
+        acc[current.sales_id] = {
+          id: current.sales_id,
+          type: current.type,
+          delivery_address: current.delivery_address,
+          amount: current.amount,
+          status: current.status,
+          date_created: current.date_created,
+          date_updated: current.date_updated,
+          items: []
+        }
+      }
+
+      //appends the sales_item to the accumulator
+      acc[current.sales_id].items.push({
+        sales_id: current.sales_id,
+        jar_type_id: current.jar_type_id,
+        quantity: current.  quantity,
+        price: current.price,
+        total_amount: current.total_amount
+      });
+
+      //returns the value
+      return acc;
+    }, {});
+    return res.status(200).json(result[customer]);
   })
 
 });
