@@ -276,6 +276,7 @@ router.get('/get-customer-record', (req, res) => {
         acc[current.sales_id] = {
           id: current.sales_id,
           type: current.type,
+          customer_name: current.customer_name,
           delivery_address: current.delivery_address,
           amount: current.amount,
           status: current.status,
