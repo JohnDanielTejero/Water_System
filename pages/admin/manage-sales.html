@@ -132,6 +132,7 @@
                         method: 'GET',
                         error: e => console.error(e),
                         success: resp => {
+                            console.log(resp);
                             //assign user id 
                             $("#id").val(resp.id);
                             //assign customer name
@@ -150,12 +151,13 @@
                                 tr.append("<td class='text-center'><input type='hidden' name='quantity[]' value='"+quantity+"'>"+(parseFloat(quantity).toLocaleString("en-US"))+"</td>")
                                 tr.append("<td class='text-center'><input type='hidden' name='jar_type_id[]' value='"+e.jar_type_id+"'>"+(jars.find(j => j.id == e.jar_type_id).name)+"</td>")
                                 tr.append("<td class='text-center'><input type='hidden' name='price[]' value='"+price+"'>"+(parseFloat(price).toLocaleString("en-US"))+"</td>")
-                                tr.append("<td class='text-center'><input type='hidden' name='total_amount[]' value='"+e.amount+"'>"+(parseFloat(amount).toLocaleString("en-US"))+"</td>")
+                                tr.append("<td class='text-center'><input type='hidden' name='total_amount[]' value='"+amount+"'>"+(parseFloat(amount).toLocaleString("en-US"))+"</td>")
                                 $('#item-list tbody').append(tr);
-                                calculate_total();
-                                $('#quantity').val('');
-                                $('#jar_type_id').val('').trigger('change');
                             });
+                            $('#quantity').val('');
+                            $('#jar_type_id').val('').trigger('change');
+                            calculate_total();
+
                         }
                     });
 
